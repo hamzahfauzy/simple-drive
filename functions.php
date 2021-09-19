@@ -1,5 +1,5 @@
 <?php
-define('API_URL','http://lmskemendagri.test/api/');
+require '../config/main.php';
 
 function url(){
     $server_name = $_SERVER['SERVER_NAME'];

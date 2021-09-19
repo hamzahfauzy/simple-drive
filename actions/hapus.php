@@ -23,6 +23,6 @@ $response = curl_exec($curl);
 curl_close($curl);
 $response = json_decode($response);
 if($response->msg == 'sukses')
-    unlink('../storage/'.$_SESSION['auth']['username'].'/'.$filename);
+    unlink('../storage/'.$_SESSION['auth']['id'].'/'.$filename);
 
 echo $response->msg;
