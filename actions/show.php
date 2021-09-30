@@ -9,6 +9,8 @@ curl_setopt_array($curl, array(
     CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_SSL_VERIFYHOST => 0, // or false
+    CURLOPT_SSL_VERIFYPEER => 0, // or false
 ));
 
 $response = curl_exec($curl);

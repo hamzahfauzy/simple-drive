@@ -16,6 +16,8 @@ curl_setopt_array($curl, array(
     CURLOPT_HTTPHEADER => array(
         'Authorization: Bearer '.$_SESSION['auth']['token']
     ),
+    CURLOPT_SSL_VERIFYHOST => 0, // or false
+    CURLOPT_SSL_VERIFYPEER => 0, // or false
 ));
 
 $response = curl_exec($curl);
