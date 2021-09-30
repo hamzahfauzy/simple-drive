@@ -55,57 +55,21 @@
         </div>
     </div>
 </div>
-<?php if(count($all_files)): ?>
-<div class="content lg:max-w-screen-lg lg:mx-auto mx-6 pt-8 pb-8">
+
+<div class="content content-file-anda hidden lg:max-w-screen-lg lg:mx-auto mx-6 pt-8 pb-8">
     <h2 class="text-xl mb-4 mx-2">File Anda</h2>
-    <div class="grid grid-cols-3 gap-4">
-        <?php
-            foreach($all_files as $f):
-                $id = $f->id;
-                $file = $f->file_name;
-                $src = "storage/".$_SESSION['auth']['id']."/".$file;
-                if(!file_exists($src)) continue;
-                $file_url = url()."/index.php?action=show&id=".$f->unique_id; //storage/".$_SESSION['auth']['username']."/".$file;
-                $file_time = explode('_',$file);
-                $original_filename = $file;
-                $f = $file_time;
-                unset($f[0]);
-                $file_name = implode('_', $f);
-                $file = str_replace('_',' ',$file);
-                $file = str_replace($file_time[0],'',$file);
-                $mime = mime_content_type($src);
-                $mime = mime_icon_name($mime);
-        ?>
-        <figure class="bg-white rounded-xl p-4 m-2">
-            <div class="bg-gray-100 rounded-xl p-8">
-                <h2 class="text-9xl text-center">
-                    <i class="fa fa-<?=$mime?>"></i>
-                </h2>
-            </div>
-            <div class="pt-4 text-center md:text-left">
-                <a href="<?=$file_url?>" target="_blank" class="text-indigo-800"><?= $file ?></a><br>
-                <span class="text-xs text-grey-400">Diupload pada <?=date('d/m/Y',$file_time[0])?></span>
-                <div class="clear-both"></div>
-                <a href="javascript:void(0)" onclick="copyUrl('url-<?=$id?>')" class="bg-green-800 hover:bg-green-600 text-white px-3 py-2 rounded text-xs inline-block mb-1"><i class="fa fa-link"></i> Salin URL</a>
-                <a href="<?=$file_url?>" class="bg-blue-800 hover:bg-blue-600 text-white px-3 py-2 rounded text-xs inline-block mb-1"><i class="fa fa-download"></i> Unduh</a>
-                <a href="javascript:void(0)" onclick="hapus('<?=$original_filename?>','<?=$file_name?>')" class="bg-red-800 hover:bg-red-600 text-white px-3 py-2 rounded text-xs inline-block mb-1">Hapus</a>
-                <input type="text" class="opacity-0" value="<?=$file_url?>" id="url-<?=$id?>">
-            </div>
-        </figure>
-        <?php endforeach ?>
-    </div>
+    <div class="grid grid-cols-3 gap-4 file_anda"></div>
     <div class="fab">
         <a href="javascript:void(0)" onclick="openModal()" class="rounded-full shadow-lg p-0 w-12 h-12 bg-indigo-800 text-white fixed right-10 bottom-10 text-xl text-center" style="line-height: 48px;"><i class="fa fa-plus"></i></a>
     </div>
 </div>
-<?php else: ?>
-<div class="content flex items-center" style="min-height:calc(100vh - 58px);height:auto;">
+
+<div class="content content-tidak-ada-file flex items-center" style="min-height:calc(100vh - 58px);height:auto;">
     <div class="text-center lg:max-w-screen-lg mx-auto">
         <h1 class="text-5xl opacity-50 mb-2">Belum ada file</h1>
         <button class="p-2 bg-blue-800 text-white rounded px-4" onclick="openModal()">Klik untuk mengupload file</button>
     </div>
 </div>
-<?php endif ?>
 
 <script>
 function openModal()
@@ -203,16 +167,17 @@ function hapus(ori, file_name)
     var c = confirm('Apakah anda yakin akan menghapus file ini ?')
     if(!c) return
 
-    fetch('?action=hapus',{
+    fetch('<?=API_URL?>drive/hapus',{
         method:'POST',
         headers:{
-            'content-type':'application/x-www-form-urlencoded'
+            'Authorization': 'Bearer <?=$_SESSION['auth']['token']?>',
+            'Content-Type':'application/x-www-form-urlencoded'
         },
-        body:'filename='+ori
+        body:'file_name='+ori
     })
-    .then(res => res.text())
+    .then(res => res.json())
     .then(res => {
-        if(res == 'sukses')
+        if(res.msg == 'sukses')
         {
             alert('File '+file_name+' Berhasil di hapus')
             location.reload()
@@ -265,5 +230,49 @@ function copyUrl(el) {
       alert('Link berhasil disalin')
   },100)
 }
+
+async function init()
+{
+    var req_file = await fetch('<?=API_URL?>drive/index',{
+        headers:{
+            Authorization: 'Bearer <?=$_SESSION['auth']['token']?>'
+        }
+    })
+
+    var res_file = await req_file.json();
+    if(res_file.length)
+    {
+        var file_lists = ''
+        res_file.forEach(f => {
+            var re = /(?:\.([^.]+))?$/;
+            var ext = re.exec(f.nama)[1]; 
+            var id  = f.id
+            var file_url = "<?=url()?>/index.php?action=show&file="+f.file_name+"&id="+f.user_id; //storage/".$_SESSION['auth']['username']."/".$file;
+        
+        file_lists += `<figure class="bg-white rounded-xl p-4 m-2">
+            <div class="bg-gray-100 rounded-xl p-8">
+                <h2 class="text-9xl text-center">
+                    <i class="fa fa-file"></i>
+                </h2>
+            </div>
+            <div class="pt-4 text-center md:text-left">
+                <a href="${file_url}" target="_blank" class="text-indigo-800">${f.nama}</a><br>
+                <span class="text-xs text-grey-400">Diupload pada ${f.created_at}</span>
+                <div class="clear-both"></div>
+                <a href="javascript:void(0)" onclick="copyUrl('url-${id}')" class="bg-green-800 hover:bg-green-600 text-white px-3 py-2 rounded text-xs inline-block mb-1"><i class="fa fa-link"></i> Salin URL</a>
+                <a href="${file_url}" class="bg-blue-800 hover:bg-blue-600 text-white px-3 py-2 rounded text-xs inline-block mb-1"><i class="fa fa-download"></i> Unduh</a>
+                <a href="javascript:void(0)" onclick="hapus('${f.file_name}','${f.nama}')" class="bg-red-800 hover:bg-red-600 text-white px-3 py-2 rounded text-xs inline-block mb-1">Hapus</a>
+                <input type="text" class="opacity-0" value="${file_url}" id="url-${id}">
+            </div>
+        </figure>`
+        })
+
+        document.querySelector('.content-file-anda').classList.toggle('hidden')
+        document.querySelector('.content-tidak-ada-file').classList.toggle('hidden')
+        document.querySelector('.file_anda').innerHTML = file_lists
+    }
+}
+
+init()
 </script>
 <?php load('partials/bottom') ?>
