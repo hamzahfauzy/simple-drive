@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LMS Drive Videos Login Page</title>
+    <title>LMS Drive Login Page</title>
     <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
     <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,7 +21,7 @@
         <div class="shadow p-8 m-auto lg:w-2/6 rounded-md max-w-screen-sm">
             <img src="images/logo_app_small.png" width="70px" alt="" class="mx-auto">
             <div class="text-center my-4">
-                <h3 class="font-semibold text-5xl">LMS Video Drive</h3>
+                <h3 class="font-semibold text-5xl">LMS Drive</h3>
                 <h4 class="font-semibold text-xl">Masuk untuk melanjutkan</h4>
             </div>
 
