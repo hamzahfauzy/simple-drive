@@ -239,6 +239,12 @@ async function init()
         }
     })
 
+    if(req.status == 401)
+    {
+        location='?action=auth/logout'
+        return
+    }
+
     var res_file = await req_file.json();
     if(res_file.length)
     {
