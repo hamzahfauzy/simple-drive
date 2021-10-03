@@ -239,7 +239,7 @@ async function init()
         }
     })
 
-    if(req.status == 401)
+    if(req_file.status == 401)
     {
         location='?action=auth/logout'
         return
