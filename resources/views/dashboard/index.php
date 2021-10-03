@@ -255,7 +255,7 @@ async function init()
                     <i class="fa fa-file"></i>
                 </h2>
             </div>
-            <div class="pt-4 text-center md:text-left">
+            <div class="pt-4 text-center md:text-left break-words">
                 <a href="${file_url}" target="_blank" class="text-indigo-800">${f.nama}</a><br>
                 <span class="text-xs text-grey-400">Diupload pada ${f.created_at}</span>
                 <div class="clear-both"></div>
